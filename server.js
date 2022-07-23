@@ -1,15 +1,17 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const articleRouter = require('./routes/articles')
-const app = express()
-const path = require('path')
+const express = require('express');
+const mongoose = require('mongoose');
+const articleRouter = require('./routes/articles');
+const app = express();
+const path = require('path');
 
-mongoose.connect('mongodb://localhost/blog')
+const port = 5000;
+const dbUrl = 'mongodb://localhost/blog';
 
-app.set('view engine','ejs')
+mongoose.connect(dbUrl);
 
-app.use(express.urlencoded({ extended: false}))
+app.set('view engine','ejs');
 
+app.use(express.urlencoded({ extended: false }));
 app.use(
 	"/css",
 	express.static(path.join(__dirname, "./node_modules/bootstrap/dist/css"))
@@ -20,15 +22,21 @@ app.use(
 );
 
 
-app.get('/',(req,res) => {
+app.get('/', (req,res) => {
      const articles = [{
           title: 'Test article',
           createdAt : new Date(),
           description: 'Test description'
-     }]
-     res.render('articles/index', { articles: articles })
-})
+     }];
+     res.render('articles/index', { articles: articles });
+});
 
-app.use('/articles', articleRouter)
+app.use('/articles', articleRouter);
 
-app.listen(5000)
+app.listen(port, err => {
+     console.log(
+          err
+          ? `could not establish connection :( \n${err}`
+          : `listening on port ${port} :)`
+     );
+});
